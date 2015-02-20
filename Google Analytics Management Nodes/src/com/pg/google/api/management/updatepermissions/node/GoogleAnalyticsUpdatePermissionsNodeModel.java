@@ -133,7 +133,17 @@ public class GoogleAnalyticsUpdatePermissionsNodeModel extends NodeModel {
     @Override
     protected void validateSettings(final NodeSettingsRO settings)
             throws InvalidSettingsException {
-        
+     
+    	configuration = new GoogleAnalyticsUpdatePermissionsConfiguration();
+    	configuration.load(settings);
+    	if ( !configuration.isSetTo() ) {
+    		throw new InvalidSettingsException("Only 'Set To' operation currently supported");
+    	}
+    	
+    	if ( !configuration.getManageUsers() && !configuration.getEdit() && !configuration.getCollaborate() && !configuration.getRead() ) {
+    		throw new InvalidSettingsException("At least one permission level must be chosen");
+    	}
+    	
     }
     
     /**

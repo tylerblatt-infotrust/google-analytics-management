@@ -26,7 +26,7 @@ import com.pg.knime.node.StandardTrackedNodeDialogPane;
  */
 public class GoogleAnalyticUsersNodeDialog extends StandardTrackedNodeDialogPane {
 
-	private DefaultComboBoxModel<String> cbmLevels = new DefaultComboBoxModel<String>();
+	private DefaultComboBoxModel<String> cbmLevels = new DefaultComboBoxModel<String>(new String[] { "Account Level", "Property Level", "Profile Level"} );
 	private GoogleAnalyticsUsersConfiguration configuration = new GoogleAnalyticsUsersConfiguration();
 	
     /**
@@ -34,16 +34,10 @@ public class GoogleAnalyticUsersNodeDialog extends StandardTrackedNodeDialogPane
      */
     protected GoogleAnalyticUsersNodeDialog() {
     	
-    	JComboBox<String> cbxLevels = new JComboBox<String>(cbmLevels);
-    	cbmLevels.addElement("Account Level");
-    	cbmLevels.addElement("Property Level");
-    	cbmLevels.addElement("Profile Level");
-    	
-    	
     	addTab("Settings", 
     		buildStandardPanel(
     			new PanelBuilder()
-    				.add("Level", cbxLevels )
+    				.add("Level", new JComboBox<String>(cbmLevels) )
     				.build()    				
     		)
     	);

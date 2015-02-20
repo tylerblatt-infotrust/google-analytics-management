@@ -71,6 +71,7 @@ public class GoogleAnalyticsUpdatePermissionsNodeDialog extends StandardTrackedN
 			throws InvalidSettingsException {
 
 		configuration = new GoogleAnalyticsUpdatePermissionsConfiguration();
+		configuration.setLevel((String)cbmLevels.getSelectedItem());
 		configuration.setUserId(txtUserId.getText());
 		configuration.setOperation((String)cbxPermissionOperations.getSelectedItem());
 		
@@ -90,6 +91,9 @@ public class GoogleAnalyticsUpdatePermissionsNodeDialog extends StandardTrackedN
 		configuration.load(settings);
 		
 		txtUserId.setText(configuration.getUserId());
+		
+		if ( !StringUtils.isEmpty(configuration.getLevel()) )
+			cbmLevels.setSelectedItem(configuration.getLevel());
 		
 		if ( !StringUtils.isEmpty(configuration.getOperation()) )
 			cbxPermissionOperations.setSelectedItem(configuration.getOperation());

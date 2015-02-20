@@ -2,6 +2,8 @@ package com.pg.google.api.management.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.knime.core.node.NodeLogger;
@@ -11,6 +13,7 @@ import com.google.api.services.analytics.Analytics.Management.AccountUserLinks;
 import com.google.api.services.analytics.Analytics.Management.ProfileUserLinks;
 import com.google.api.services.analytics.Analytics.Management.WebpropertyUserLinks;
 import com.google.api.services.analytics.model.EntityUserLink;
+import com.google.api.services.analytics.model.EntityUserLink.Permissions;
 import com.google.api.services.analytics.model.EntityUserLinks;
 import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.GaData.ProfileInfo;
@@ -20,9 +23,11 @@ public class GoogleAnalyticsManagementClient {
 
 	private GoogleAnalyticsConnection analyticsConnection;
 	
-	private static final String ALL = "~all";
+	//private static final String ALL = "~all";
 	private static final NodeLogger LOGGER = NodeLogger.getLogger(GoogleAnalyticsManagementClient.class);
 	private static final int MAX_ATTEMPTS = 5;
+	
+	protected static HashMap<String, ProfileInfo> PROFILE_CACHE = new HashMap<String, ProfileInfo>();
 	
 	public GoogleAnalyticsManagementClient( GoogleAnalyticsConnection connection ) {
 		this.analyticsConnection = connection;
@@ -31,9 +36,13 @@ public class GoogleAnalyticsManagementClient {
 	// Execute very simple query to acquire Profile MetaData
 	private ProfileInfo getProfileInfo(String profileId) {
 		
+		ProfileInfo cachedInfo = PROFILE_CACHE.get(profileId);
+		if ( cachedInfo != null ) return cachedInfo;
+		
 		try {
 			analyticsConnection.query("2014-01-01", "2014-01-01", new String[] {"ga:sessions"}, new String[] {} , null);
 			GaData model = analyticsConnection.getDataModel();
+			PROFILE_CACHE.put(profileId, model.getProfileInfo());
 			return model.getProfileInfo();
 			
 		} catch (Exception e) {
@@ -43,8 +52,45 @@ public class GoogleAnalyticsManagementClient {
 		return null;
 	}
 	
-	public void removePermission ( String permission ) {
+	
+	
+	public void updateAccountPermission ( String userId, String[] permissions ) throws IOException {
 		
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		Permissions perms = new Permissions();
+		perms.setLocal(Arrays.asList(permissions));
+		
+		EntityUserLink link = new EntityUserLink();
+		link.setPermissions(perms);
+		
+		analyticsConnection.getAnalytics().management().accountUserLinks().update(profile.getAccountId(), profile.getAccountId() + ":" + userId, link).execute();
+	}
+	
+	public void updatePropertyPermission ( String userId, String[] permissions ) throws IOException {
+		
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		Permissions perms = new Permissions();
+		perms.setLocal(Arrays.asList(permissions));
+		
+		EntityUserLink link = new EntityUserLink();
+		link.setPermissions(perms);
+		
+		analyticsConnection.getAnalytics().management().webpropertyUserLinks().update(profile.getAccountId(), profile.getWebPropertyId(), profile.getWebPropertyId() + ":" + userId, link).execute();
+	}
+	
+	public void updateProfilePermission ( String userId, String[] permissions ) throws IOException {
+		
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		Permissions perms = new Permissions();
+		perms.setLocal(Arrays.asList(permissions));
+		
+		EntityUserLink link = new EntityUserLink();
+		link.setPermissions(perms);
+		
+		analyticsConnection.getAnalytics().management().profileUserLinks().update(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId(), profile.getProfileId() + ":" + userId, link).execute();
 	}
 	
 	public List<GoogleAnalyticsUser> getProfileUsers() throws IOException {

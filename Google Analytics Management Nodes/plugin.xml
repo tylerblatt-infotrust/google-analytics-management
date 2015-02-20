@@ -18,7 +18,7 @@
          point="org.knime.workbench.repository.nodes">
       <node
             category-path="/pg/google/ganalytics"
-            factory-class="com.pg.google.api.management.node.GoogleAnalyticUsersNodeFactory"
+            factory-class="com.pg.google.api.management.listusers.node.GoogleAnalyticUsersNodeFactory"
             id="com.pg.google.api.management.node.GoogleAnalyticUsersNodeFactory"/>
    </extension>
    

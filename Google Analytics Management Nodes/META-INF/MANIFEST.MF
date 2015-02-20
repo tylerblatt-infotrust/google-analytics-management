@@ -4,7 +4,7 @@ Bundle-Name: GoogleAnalyticUsers-Node extension for KNIME Workbench
 Bundle-SymbolicName: com.pg.google.api.management.node; singleton:=true
 Bundle-Version: 1.0.0
 Bundle-ClassPath: googleanalyticusers.jar
-Bundle-Activator: com.pg.google.api.management.node.GoogleAnalyticUsersNodePlugin
+Bundle-Activator: com.pg.google.api.management.listusers.node.GoogleAnalyticUsersNodePlugin
 Bundle-Vendor: P&G, eBusiness
 Require-Bundle: org.eclipse.core.runtime,
  org.knime.workbench.core,
@@ -16,6 +16,6 @@ Require-Bundle: org.eclipse.core.runtime,
  com.pg.google.api;bundle-version="1.0.19",
  org.apache.commons.lang;bundle-version="2.6.0"
 Bundle-ActivationPolicy: lazy
-Export-Package: com.pg.google.api.management.node
+Export-Package: com.pg.google.api.management.listusers.node
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 

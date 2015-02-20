@@ -1,4 +1,4 @@
-package com.pg.google.api.management.node;
+package com.pg.google.api.management.listusers.node;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

@@ -2,7 +2,7 @@
  * $Revision$ $Date$ $Author$
  *
  */
-package com.pg.google.api.management.node;
+package com.pg.google.api.management.listusers.node;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;

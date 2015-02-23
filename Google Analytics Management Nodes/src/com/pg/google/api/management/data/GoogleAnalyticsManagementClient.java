@@ -10,8 +10,10 @@ import org.knime.core.node.NodeLogger;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.analytics.Analytics.Management.AccountUserLinks;
+import com.google.api.services.analytics.Analytics.Management.CustomDimensions;
 import com.google.api.services.analytics.Analytics.Management.ProfileUserLinks;
 import com.google.api.services.analytics.Analytics.Management.WebpropertyUserLinks;
+import com.google.api.services.analytics.model.CustomDimension;
 import com.google.api.services.analytics.model.EntityUserLink;
 import com.google.api.services.analytics.model.EntityUserLink.Permissions;
 import com.google.api.services.analytics.model.EntityUserLinks;
@@ -52,7 +54,37 @@ public class GoogleAnalyticsManagementClient {
 		return null;
 	}
 	
-	
+	public List<CustomDimension> getCustomDimensions() throws IOException {
+		
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		CustomDimensions.List request = analyticsConnection.getAnalytics().management().customDimensions().list(profile.getAccountId(), profile.getWebPropertyId());
+		com.google.api.services.analytics.model.CustomDimensions results = null;
+		
+		int attempt = 0;
+		do {
+			try {
+				attempt++;
+				return request.execute().getItems();
+					
+			} catch ( GoogleJsonResponseException exc ) {
+				String reason = exc.getDetails().getErrors().get(0).getReason();
+
+				// GUARD STATEMENT: Exceeded maximum attempts
+				if ( attempt++ > MAX_ATTEMPTS ) throw exc;
+				
+				// GUARD STATEMENT: Unknown exception
+				if ( !( ("rateLimitExceeded".equals(reason) || "dailyLimitExceeded".equals(reason) || "userRateLimitExceeded".equals(reason) || "backendError".equals(reason) ) ) ) {
+					throw exc;
+				}
+				
+				try { Thread.sleep(2000); } catch ( Exception e ) {}
+			}			
+			
+		} while ( results == null );
+		
+		return null;
+	}	
 	
 	public void updateAccountPermission ( String userId, String[] permissions ) throws IOException {
 		

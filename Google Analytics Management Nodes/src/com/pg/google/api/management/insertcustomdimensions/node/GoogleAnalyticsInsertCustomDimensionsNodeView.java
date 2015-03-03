@@ -1,0 +1,48 @@
+package com.pg.google.api.management.insertcustomdimensions.node;
+
+import org.knime.core.node.NodeView;
+
+/**
+ * <code>NodeView</code> for the "GoogleAnalyticsInsertCustomDimensions" Node.
+ * 
+ *
+ * @author P&G, eBusiness
+ */
+public class GoogleAnalyticsInsertCustomDimensionsNodeView extends NodeView<GoogleAnalyticsInsertCustomDimensionsNodeModel> {
+
+    /**
+     * Creates a new view.
+     * 
+     * @param nodeModel The model (class: {@link GoogleAnalyticsInsertCustomDimensionsNodeModel})
+     */
+    protected GoogleAnalyticsInsertCustomDimensionsNodeView(final GoogleAnalyticsInsertCustomDimensionsNodeModel nodeModel) {
+        super(nodeModel);
+        // TODO: generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void modelChanged() {
+        // TODO: generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onClose() {
+        // TODO: generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onOpen() {
+        // TODO: generated method stub
+    }
+
+}
+

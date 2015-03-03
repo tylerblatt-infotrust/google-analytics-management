@@ -11,8 +11,11 @@ import org.knime.core.node.NodeLogger;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.analytics.Analytics.Management.AccountUserLinks;
 import com.google.api.services.analytics.Analytics.Management.CustomDimensions;
+import com.google.api.services.analytics.Analytics.Management.CustomDimensions.Insert;
+import com.google.api.services.analytics.Analytics.Management.CustomDimensions.Update;
 import com.google.api.services.analytics.Analytics.Management.ProfileUserLinks;
 import com.google.api.services.analytics.Analytics.Management.WebpropertyUserLinks;
+import com.google.api.services.analytics.AnalyticsRequest;
 import com.google.api.services.analytics.model.CustomDimension;
 import com.google.api.services.analytics.model.EntityUserLink;
 import com.google.api.services.analytics.model.EntityUserLink.Permissions;
@@ -54,6 +57,62 @@ public class GoogleAnalyticsManagementClient {
 		return null;
 	}
 	
+	public void updateCustomDimension ( String customDimensionId, String dimensionName, String dimensionScope ) throws IOException {
+		
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		CustomDimension dimension = new CustomDimension();
+		dimension.setScope(dimensionScope);
+		dimension.setName(dimensionName);
+		dimension.setActive(true);
+		
+		Update request = analyticsConnection.getAnalytics().management().customDimensions().update(profile.getAccountId(), profile.getWebPropertyId(), customDimensionId, dimension );
+		protectedQuery(request);
+		
+	}
+	
+	public void insertCustomDimension (String customDimensionId, String dimensionName, String dimensionScope ) throws IOException {
+		
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		CustomDimension dimension = new CustomDimension();
+		dimension.setId(customDimensionId);
+		dimension.setScope(dimensionScope);
+		dimension.setName(dimensionName);
+		dimension.setActive(true);
+		
+		Insert request = analyticsConnection.getAnalytics().management().customDimensions().insert(profile.getAccountId(), profile.getWebPropertyId(), dimension);
+		protectedQuery(request);
+		
+	}
+	
+	protected <T> T protectedQuery( AnalyticsRequest<T> request) throws IOException {
+		int attempt = 0;
+		T result = null;
+		
+		do {
+			try {
+				result = request.execute();
+			} catch (GoogleJsonResponseException exc ) {
+				String reason = exc.getDetails().getErrors().get(0).getReason();
+				LOGGER.debug(reason);
+				
+				// GUARD STATEMENT: Exceeded maximum attempts
+				if ( attempt++ > MAX_ATTEMPTS ) throw exc;
+				
+				// GUARD STATEMENT: Unknown exception
+				if ( !( ("rateLimitExceeded".equals(reason) || "dailyLimitExceeded".equals(reason) || "userRateLimitExceeded".equals(reason) || "backendError".equals(reason) ) ) ) {
+					throw exc;
+				}
+				
+				try { Thread.sleep(1000*attempt); } catch ( Exception e ) {}
+			}
+			
+		} while (result == null);
+		
+		return result;
+	}
+	
 	public List<CustomDimension> getCustomDimensions() throws IOException {
 		
 		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
@@ -69,7 +128,7 @@ public class GoogleAnalyticsManagementClient {
 					
 			} catch ( GoogleJsonResponseException exc ) {
 				String reason = exc.getDetails().getErrors().get(0).getReason();
-
+				
 				// GUARD STATEMENT: Exceeded maximum attempts
 				if ( attempt++ > MAX_ATTEMPTS ) throw exc;
 				

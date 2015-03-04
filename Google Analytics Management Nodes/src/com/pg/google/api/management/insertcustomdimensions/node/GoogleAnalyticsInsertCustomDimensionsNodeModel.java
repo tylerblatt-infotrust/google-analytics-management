@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataTableSpec;
+import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.StringCell;
+import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
@@ -23,6 +26,7 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
 import com.google.api.services.analytics.model.CustomDimension;
+import com.google.api.services.analytics.model.GaData.ProfileInfo;
 import com.pg.google.api.analytics.connector.data.GoogleAnalyticsConnectionPortObject;
 import com.pg.google.api.management.data.GoogleAnalyticsManagementClient;
 
@@ -52,13 +56,22 @@ public class GoogleAnalyticsInsertCustomDimensionsNodeModel extends NodeModel {
 
     	GoogleAnalyticsConnectionPortObject analyticsConnection = (GoogleAnalyticsConnectionPortObject)inObjects[0];
     	GoogleAnalyticsManagementClient managementClient = new GoogleAnalyticsManagementClient(analyticsConnection.getGoogleAnalyticsConnection());
-    
+    	ProfileInfo profileInfo = managementClient.getProfileInfo();
+    	
     	List<CustomDimension> dimensions = managementClient.getCustomDimensions();
+    	
+    	DataTableSpec spec = createSpec();
+    	BufferedDataContainer container = exec.createDataContainer(spec);
     	
     	for ( int i = 1; i <= configuration.getMaxDimensions(); i++ ) {
     		
     		String dimensionId = "ga:dimension" + i;
     		exec.setMessage("Updating Custom Dimension " + i);
+    		
+    		List<DataCell> cells = new ArrayList<DataCell>(spec.getNumColumns());
+    		cells.add(new StringCell(profileInfo.getAccountId()));
+    		cells.add(new StringCell(profileInfo.getWebPropertyId()));
+    		cells.add(new StringCell(dimensionId));
     		
     		String dimensionName = configuration.getDimensionNames().get(i-1);
     		if ( StringUtils.isEmpty(dimensionName ) ) dimensionName = GoogleAnalyticsInsertCustomDimensionsConfiguration.DEFAULT_NAME;
@@ -66,14 +79,35 @@ public class GoogleAnalyticsInsertCustomDimensionsNodeModel extends NodeModel {
     		String dimensionScope = configuration.getDimensionScopes().get(i-1);
     		if ( StringUtils.isEmpty(dimensionScope) ) dimensionScope = GoogleAnalyticsInsertCustomDimensionsConfiguration.DEFAULT_SCOPE;
     		
-    		// Update or Create
-    		if ( configuration.getDimension(dimensionId, dimensions) != null ) 
-    			managementClient.updateCustomDimension(dimensionId, dimensionName, dimensionScope);
-    		else
-    			managementClient.insertCustomDimension(dimensionId, dimensionName, dimensionScope);
+    		try {
+	    		// Update or Create
+	    		CustomDimension existingDimension = configuration.getDimension(dimensionId, dimensions);
+	    		if ( existingDimension != null ) {
+	    			// Guard statement: No need to update:
+	    			if ( dimensionName.equals(existingDimension.getName()) && dimensionScope.equals(existingDimension.getScope())) { 
+	    				cells.add(new StringCell("NO CHANGE"));
+	    			} else {
+	    				managementClient.updateCustomDimension(dimensionId, dimensionName, dimensionScope);
+		    			cells.add(new StringCell("SUCCESS - UPDATED"));	
+	    			}
+	    		}
+	    		else {
+	    			managementClient.insertCustomDimension(dimensionId, dimensionName, dimensionScope);
+	    			cells.add(new StringCell("SUCCESS - ADDED"));
+	    		}
+	    			
+	    		cells.add(new StringCell(""));
+	    		
+    		} catch ( IOException exc ) {
+    			cells.add(new StringCell("FAILED"));
+	    		cells.add(new StringCell(exc.getMessage()));
+    		}
+    		
+    		container.addRowToTable(new DefaultRow("Row " + i, cells));
     	}
     	
-    	return new PortObject[] { null };
+    	container.close();
+        return new PortObject[] { container.getTable() };
     }
 
     /**

@@ -3,25 +3,20 @@
     <name>GA Management User Permission Update</name>
     
     <shortDescription>
-        
+        Updates permission for a user on a Google Analytics profile, property or account.
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
+        <intro>Updates permission for a user on a Google Analytics profile, property or account.</intro>
         
         
-        <option name="short name of first option (like in the dialog)">description of first option</option>
-        <option name="short name of second option (like in the dialog)">description of second option</option>
-        <!-- possibly more options that can also be grouped by tabs -->
-        <!--
         <tab name="Standard Options">
-            <option name="short name of first option (like in the dialog)">description of first option</option>
-            <option name="short name of second option (like in the dialog)">description of second option</option>
+           <option name="Level">Level to retrieve users for - either profile, property or account.</option>
+            <option name="User Id">User Id to change permissions for.</option>
+            <option name="Permission Operation">The operation to execute - either Set, Add or Remove.</option>
+            <option name="Permissions">The specific permissions involved.</option>
         </tab>
-        <tab name="Advanced Options">
-            <option name="short name of first advanced option (like in the dialog)">description of first advanced option</option>
-        </tab>
-        -->
+        
     </fullDescription>
     
     <ports>

@@ -39,7 +39,7 @@ public class GoogleAnalyticsManagementClient {
 	}
 	
 	// Execute very simple query to acquire Profile MetaData
-	private ProfileInfo getProfileInfo(String profileId) {
+	public ProfileInfo getProfileInfo(String profileId) {
 		
 		ProfileInfo cachedInfo = PROFILE_CACHE.get(profileId);
 		if ( cachedInfo != null ) return cachedInfo;
@@ -55,6 +55,10 @@ public class GoogleAnalyticsManagementClient {
 		}
 		
 		return null;
+	}
+	
+	public ProfileInfo getProfileInfo() {
+		return getProfileInfo(analyticsConnection.getProfileId());
 	}
 	
 	public void updateCustomDimension ( String customDimensionId, String dimensionName, String dimensionScope ) throws IOException {
@@ -89,10 +93,12 @@ public class GoogleAnalyticsManagementClient {
 	protected <T> T protectedQuery( AnalyticsRequest<T> request) throws IOException {
 		int attempt = 0;
 		T result = null;
+		boolean complete = false;
 		
 		do {
 			try {
 				result = request.execute();
+				complete = true;
 			} catch (GoogleJsonResponseException exc ) {
 				String reason = exc.getDetails().getErrors().get(0).getReason();
 				LOGGER.debug(reason);
@@ -108,7 +114,7 @@ public class GoogleAnalyticsManagementClient {
 				try { Thread.sleep(1000*attempt); } catch ( Exception e ) {}
 			}
 			
-		} while (result == null);
+		} while (!complete);
 		
 		return result;
 	}
@@ -118,31 +124,11 @@ public class GoogleAnalyticsManagementClient {
 		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
 		
 		CustomDimensions.List request = analyticsConnection.getAnalytics().management().customDimensions().list(profile.getAccountId(), profile.getWebPropertyId());
-		com.google.api.services.analytics.model.CustomDimensions results = null;
 		
-		int attempt = 0;
-		do {
-			try {
-				attempt++;
-				return request.execute().getItems();
-					
-			} catch ( GoogleJsonResponseException exc ) {
-				String reason = exc.getDetails().getErrors().get(0).getReason();
-				
-				// GUARD STATEMENT: Exceeded maximum attempts
-				if ( attempt++ > MAX_ATTEMPTS ) throw exc;
-				
-				// GUARD STATEMENT: Unknown exception
-				if ( !( ("rateLimitExceeded".equals(reason) || "dailyLimitExceeded".equals(reason) || "userRateLimitExceeded".equals(reason) || "backendError".equals(reason) ) ) ) {
-					throw exc;
-				}
-				
-				try { Thread.sleep(2000); } catch ( Exception e ) {}
-			}			
-			
-		} while ( results == null );
+		com.google.api.services.analytics.model.CustomDimensions dimensions = protectedQuery(request);
+		if ( dimensions == null ) return null;
 		
-		return null;
+		return dimensions.getItems();
 	}	
 	
 	public void updateAccountPermission ( String userId, String[] permissions ) throws IOException {
@@ -182,6 +168,30 @@ public class GoogleAnalyticsManagementClient {
 		link.setPermissions(perms);
 		
 		analyticsConnection.getAnalytics().management().profileUserLinks().update(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId(), profile.getProfileId() + ":" + userId, link).execute();
+	}
+	
+	public void removeProfileUser ( String userId ) throws IOException {
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		protectedQuery(
+				analyticsConnection.getAnalytics().management().profileUserLinks().delete(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId(), profile.getProfileId() + ":" + userId)
+		);
+	}
+	
+	public void removeAccountUser ( String userId ) throws IOException {
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		protectedQuery(
+				analyticsConnection.getAnalytics().management().accountUserLinks().delete(profile.getAccountId(), profile.getAccountId() + ":" + userId)
+		);
+	}
+
+	public void removePropertyUser ( String userId ) throws IOException {
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		protectedQuery(
+				analyticsConnection.getAnalytics().management().webpropertyUserLinks().delete(profile.getAccountId(), profile.getWebPropertyId(), profile.getWebPropertyId() + ":" +userId)
+		);
 	}
 	
 	public List<GoogleAnalyticsUser> getProfileUsers() throws IOException {

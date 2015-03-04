@@ -14,10 +14,11 @@
    -->
    
    <extension point="org.knime.workbench.repository.nodes">
-      <node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.listusers.node.GoogleAnalyticUsersNodeFactory" id="com.pg.google.api.management.node.GoogleAnalyticUsersNodeFactory"/>
-   	  <node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.updatepermissions.node.GoogleAnalyticsUpdatePermissionsNodeFactory" id="com.pg.google.api.management.updatepermissions.node.GoogleAnalyticsUpdatePermissionsNodeFactory"/>
-   	  <node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.listcustomdimensions.node.GoogleAnalyticsListCustomDimensionsNodeFactory" id="com.pg.google.api.management.listcustomdimensions.node.GoogleAnalyticsListCustomDimensionsNodeFactory"/>
-	<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.insertcustomdimensions.node.GoogleAnalyticsInsertCustomDimensionsNodeFactory" id="com.pg.google.api.management.insertcustomdimensions.node.GoogleAnalyticsInsertCustomDimensionsNodeFactory"/>
-</extension>
+      	<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.listusers.node.GoogleAnalyticUsersNodeFactory" id="com.pg.google.api.management.node.GoogleAnalyticUsersNodeFactory"/>
+   	  	<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.updatepermissions.node.GoogleAnalyticsUpdatePermissionsNodeFactory" id="com.pg.google.api.management.updatepermissions.node.GoogleAnalyticsUpdatePermissionsNodeFactory"/>
+   	  	<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.listcustomdimensions.node.GoogleAnalyticsListCustomDimensionsNodeFactory" id="com.pg.google.api.management.listcustomdimensions.node.GoogleAnalyticsListCustomDimensionsNodeFactory"/>
+		<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.insertcustomdimensions.node.GoogleAnalyticsInsertCustomDimensionsNodeFactory" id="com.pg.google.api.management.insertcustomdimensions.node.GoogleAnalyticsInsertCustomDimensionsNodeFactory"/>
+		<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.removeuser.node.RemoveUserNodeFactory" id="com.pg.google.api.management.removeuser.node.RemoveUserNodeFactory"/>
+   </extension>
    
 </plugin>

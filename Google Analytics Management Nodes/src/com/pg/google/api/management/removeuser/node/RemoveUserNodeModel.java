@@ -18,7 +18,6 @@ import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
-import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.port.PortObject;
@@ -28,6 +27,7 @@ import org.knime.core.node.port.PortType;
 import com.google.api.services.analytics.model.GaData.ProfileInfo;
 import com.pg.google.api.analytics.connector.data.GoogleAnalyticsConnectionPortObject;
 import com.pg.google.api.management.data.GoogleAnalyticsManagementClient;
+import com.pg.knime.node.StandardTrackedNodeModel;
 
 /**
  * This is the model implementation of RemoveUser.
@@ -35,7 +35,7 @@ import com.pg.google.api.management.data.GoogleAnalyticsManagementClient;
  *
  * @author P&G, eBusiness
  */
-public class RemoveUserNodeModel extends NodeModel {
+public class RemoveUserNodeModel extends StandardTrackedNodeModel {
     
 	private RemoveUserConfiguration configuration = new RemoveUserConfiguration();
 	
@@ -85,6 +85,9 @@ public class RemoveUserNodeModel extends NodeModel {
     	
         	cells.add(new StringCell("Success"));
         	cells.add(new StringCell(""));
+        	
+        	// Log in-case needed:
+        	track(configuration.getUserId());
     	} catch ( IOException exc ) {
     		cells.add(new StringCell("Failed"));
     		cells.add(new StringCell(exc.getMessage()));

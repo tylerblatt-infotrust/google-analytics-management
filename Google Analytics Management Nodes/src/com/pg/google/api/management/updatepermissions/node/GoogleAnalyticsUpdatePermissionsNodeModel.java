@@ -66,6 +66,7 @@ public class GoogleAnalyticsUpdatePermissionsNodeModel extends NodeModel {
 		
 		cells.add(new StringCell(configuration.getUserId()));
 		cells.add(new StringCell(configuration.getOperation()));
+		cells.add(new StringCell(configuration.getLevel()));
 		cells.add(new StringCell(StringUtils.join(configuration.getPermissions(), ",")));
         
 		try {
@@ -171,6 +172,7 @@ List<DataColumnSpec> colSpecs = new ArrayList<DataColumnSpec>();
         
         colSpecs.add(new DataColumnSpecCreator("User Id", StringCell.TYPE).createSpec());
         colSpecs.add(new DataColumnSpecCreator("Operation", StringCell.TYPE).createSpec());
+        colSpecs.add(new DataColumnSpecCreator("Level", StringCell.TYPE).createSpec());
         colSpecs.add(new DataColumnSpecCreator("Permissions", StringCell.TYPE).createSpec());
         colSpecs.add(new DataColumnSpecCreator("Status", StringCell.TYPE).createSpec());
         colSpecs.add(new DataColumnSpecCreator("Error Message", StringCell.TYPE).createSpec());

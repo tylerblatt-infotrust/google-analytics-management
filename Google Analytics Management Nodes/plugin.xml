@@ -19,6 +19,7 @@
    	  	<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.listcustomdimensions.node.GoogleAnalyticsListCustomDimensionsNodeFactory" id="com.pg.google.api.management.listcustomdimensions.node.GoogleAnalyticsListCustomDimensionsNodeFactory"/>
 		<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.insertcustomdimensions.node.GoogleAnalyticsInsertCustomDimensionsNodeFactory" id="com.pg.google.api.management.insertcustomdimensions.node.GoogleAnalyticsInsertCustomDimensionsNodeFactory"/>
 		<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.removeuser.node.RemoveUserNodeFactory" id="com.pg.google.api.management.removeuser.node.RemoveUserNodeFactory"/>
-   </extension>
+   		<node category-path="/pg/google/ganalytics" factory-class="com.pg.google.api.management.addusertoprofile.GoogleAnalyticsAddUserToProfileNodeFactory" id="com.pg.google.api.management.addusertoprofile.GoogleAnalyticsAddUserToProfileNodeFactory"/>
+</extension>
    
 </plugin>

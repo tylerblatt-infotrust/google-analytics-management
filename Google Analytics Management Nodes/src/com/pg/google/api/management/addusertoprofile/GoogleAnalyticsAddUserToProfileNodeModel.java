@@ -1,4 +1,4 @@
-package com.pg.google.api.management.insertcustomdimensions.node;
+package com.pg.google.api.management.addusertoprofile;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,32 +18,31 @@ import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
-import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
-import com.google.api.services.analytics.model.CustomDimension;
 import com.google.api.services.analytics.model.GaData.ProfileInfo;
 import com.pg.google.api.analytics.connector.data.GoogleAnalyticsConnectionPortObject;
 import com.pg.google.api.management.data.GoogleAnalyticsManagementClient;
+import com.pg.knime.node.StandardTrackedNodeModel;
 
 /**
- * This is the model implementation of GoogleAnalyticsInsertCustomDimensions.
+ * This is the model implementation of GoogleAnalyticsAddUserToProfile.
  * 
  *
  * @author P&G, eBusiness
  */
-public class GoogleAnalyticsInsertCustomDimensionsNodeModel extends NodeModel {
+public class GoogleAnalyticsAddUserToProfileNodeModel extends StandardTrackedNodeModel {
     
-	private GoogleAnalyticsInsertCustomDimensionsConfiguration configuration = new GoogleAnalyticsInsertCustomDimensionsConfiguration();
+	private GoogleAnalyticsAddUserToProfileConfiguration configuration = new GoogleAnalyticsAddUserToProfileConfiguration();
 	
     /**
      * Constructor for the node model.
      */
-    protected GoogleAnalyticsInsertCustomDimensionsNodeModel() {
+    protected GoogleAnalyticsAddUserToProfileNodeModel() {
         super(
             	new PortType[] { GoogleAnalyticsConnectionPortObject.TYPE },
             	new PortType[] { BufferedDataTable.TYPE }
@@ -53,59 +52,30 @@ public class GoogleAnalyticsInsertCustomDimensionsNodeModel extends NodeModel {
     @Override
     protected PortObject[] execute(PortObject[] inObjects, ExecutionContext exec)
     		throws Exception {
-
+    	
     	GoogleAnalyticsConnectionPortObject analyticsConnection = (GoogleAnalyticsConnectionPortObject)inObjects[0];
     	GoogleAnalyticsManagementClient managementClient = new GoogleAnalyticsManagementClient(analyticsConnection.getGoogleAnalyticsConnection());
-    	ProfileInfo profileInfo = managementClient.getProfileInfo();
-    	
-    	List<CustomDimension> dimensions = managementClient.getCustomDimensions();
     	
     	DataTableSpec spec = createSpec();
     	BufferedDataContainer container = exec.createDataContainer(spec);
     	
-    	for ( int i = 1; i <= configuration.getMaxDimensions(); i++ ) {
-    		
-    		String dimensionId = "ga:dimension" + i;
-    		exec.setMessage("Updating Custom Dimension " + i);
-    		
-    		List<DataCell> cells = new ArrayList<DataCell>(spec.getNumColumns());
-    		cells.add(new StringCell(profileInfo.getAccountId()));
-    		cells.add(new StringCell(profileInfo.getWebPropertyId()));
-    		cells.add(new StringCell(dimensionId));
-    		
-    		String dimensionName = configuration.getDimensionNames().get(i-1);
-    		if ( StringUtils.isEmpty(dimensionName ) ) dimensionName = GoogleAnalyticsInsertCustomDimensionsConfiguration.DEFAULT_NAME;
-    		
-    		String dimensionScope = configuration.getDimensionScopes().get(i-1);
-    		if ( StringUtils.isEmpty(dimensionScope) ) dimensionScope = GoogleAnalyticsInsertCustomDimensionsConfiguration.DEFAULT_SCOPE;
-    		
-    		try {
-	    		// Update or Create
-	    		CustomDimension existingDimension = configuration.getDimension(dimensionId, dimensions);
-	    		if ( existingDimension != null ) {
-	    			// Guard statement: No need to update:
-	    			if ( dimensionName.equals(existingDimension.getName()) && dimensionScope.equals(existingDimension.getScope())) { 
-	    				cells.add(new StringCell("NO CHANGE"));
-	    			} else {
-	    				managementClient.updateCustomDimension(dimensionId, dimensionName, dimensionScope);
-		    			cells.add(new StringCell("SUCCESS - UPDATED"));	
-	    			}
-	    		}
-	    		else {
-	    			managementClient.insertCustomDimension(dimensionId, dimensionName, dimensionScope);
-	    			cells.add(new StringCell("SUCCESS - ADDED"));
-	    		}
-	    			
-	    		cells.add(new StringCell(""));
-	    		
-    		} catch ( IOException exc ) {
-    			cells.add(new StringCell("FAILED"));
-	    		cells.add(new StringCell(exc.getMessage()));
-    		}
-    		
-    		container.addRowToTable(new DefaultRow("Row " + i, cells));
+    	ProfileInfo profileInfo = managementClient.getProfileInfo();
+    	List<DataCell> cells = new ArrayList<DataCell>(spec.getNumColumns());
+		cells.add(new StringCell(profileInfo.getAccountId()));
+		cells.add(new StringCell(profileInfo.getWebPropertyId()));
+		cells.add(new StringCell(profileInfo.getProfileId()));
+		cells.add(new StringCell(configuration.getEmailAddress()));
+    	
+    	try { 
+    		managementClient.addUserToProfile(configuration.getEmailAddress());
+    		cells.add(new StringCell("SUCCESS"));
+    		cells.add(new StringCell(""));
+    	} catch ( IOException exc ) {
+    		cells.add(new StringCell("FAILED"));
+    		cells.add(new StringCell(exc.getMessage()));
     	}
     	
+    	container.addRowToTable(new DefaultRow("Row 0", cells));
     	container.close();
         return new PortObject[] { container.getTable() };
     }
@@ -130,7 +100,8 @@ public class GoogleAnalyticsInsertCustomDimensionsNodeModel extends NodeModel {
      */
     @Override
     protected void saveSettingsTo(final NodeSettingsWO settings) {
-         // TODO: generated method stub
+         if ( configuration != null )
+        	 configuration.save(settings);
     }
 
     /**
@@ -139,8 +110,8 @@ public class GoogleAnalyticsInsertCustomDimensionsNodeModel extends NodeModel {
     @Override
     protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
             throws InvalidSettingsException {
-       
-    	configuration = new GoogleAnalyticsInsertCustomDimensionsConfiguration();
+        
+    	configuration = new GoogleAnalyticsAddUserToProfileConfiguration();
     	configuration.load(settings);
     	
     }
@@ -151,8 +122,12 @@ public class GoogleAnalyticsInsertCustomDimensionsNodeModel extends NodeModel {
     @Override
     protected void validateSettings(final NodeSettingsRO settings)
             throws InvalidSettingsException {
-        
+    	configuration = new GoogleAnalyticsAddUserToProfileConfiguration();
+    	configuration.load(settings);
     	
+    	if ( StringUtils.isEmpty(configuration.getEmailAddress()) 
+    			|| !configuration.getEmailAddress().contains("@")) 
+    		throw new InvalidSettingsException("Invalid Email Address.");
     	
     	
     }
@@ -176,18 +151,19 @@ public class GoogleAnalyticsInsertCustomDimensionsNodeModel extends NodeModel {
             CanceledExecutionException {
         // TODO: generated method stub
     }
-
+    
     private DataTableSpec createSpec() {
     	List<DataColumnSpec> colSpecs = new ArrayList<DataColumnSpec>();
         
         colSpecs.add(new DataColumnSpecCreator("Account ID", StringCell.TYPE).createSpec());
         colSpecs.add(new DataColumnSpecCreator("Property ID", StringCell.TYPE).createSpec());
-        colSpecs.add(new DataColumnSpecCreator("Custom Dimension ID", StringCell.TYPE).createSpec());
+        colSpecs.add(new DataColumnSpecCreator("Profile ID", StringCell.TYPE).createSpec());
+        colSpecs.add(new DataColumnSpecCreator("Email Address", StringCell.TYPE).createSpec());
         colSpecs.add(new DataColumnSpecCreator("Status", StringCell.TYPE).createSpec());
         colSpecs.add(new DataColumnSpecCreator("Error Message", StringCell.TYPE).createSpec());
         
         return new DataTableSpec(colSpecs.toArray(new DataColumnSpec[colSpecs.size()]));
     }
-    
+
 }
 

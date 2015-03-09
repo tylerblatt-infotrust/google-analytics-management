@@ -18,6 +18,7 @@ import com.google.api.services.analytics.Analytics.Management.WebpropertyUserLin
 import com.google.api.services.analytics.AnalyticsRequest;
 import com.google.api.services.analytics.model.CustomDimension;
 import com.google.api.services.analytics.model.EntityUserLink;
+import com.google.api.services.analytics.model.UserRef;
 import com.google.api.services.analytics.model.EntityUserLink.Permissions;
 import com.google.api.services.analytics.model.EntityUserLinks;
 import com.google.api.services.analytics.model.GaData;
@@ -88,6 +89,25 @@ public class GoogleAnalyticsManagementClient {
 		Insert request = analyticsConnection.getAnalytics().management().customDimensions().insert(profile.getAccountId(), profile.getWebPropertyId(), dimension);
 		protectedQuery(request);
 		
+	}
+	
+	public void addUserToProfile ( String emailaddress ) throws IOException {
+		
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		UserRef userRef = new UserRef();
+		userRef.setEmail(emailaddress);
+		
+		
+		Permissions perms = new Permissions();
+		perms.setLocal(Arrays.asList("READ_AND_ANALYZE"));
+		
+		EntityUserLink link = new EntityUserLink();
+		link.setPermissions(perms);
+		link.setUserRef(userRef);
+		
+		protectedQuery(
+				analyticsConnection.getAnalytics().management().profileUserLinks().insert(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId(), link)
+		);
 	}
 	
 	protected <T> T protectedQuery( AnalyticsRequest<T> request) throws IOException {

@@ -13,11 +13,16 @@ import com.google.api.services.analytics.Analytics.Management.AccountUserLinks;
 import com.google.api.services.analytics.Analytics.Management.CustomDimensions;
 import com.google.api.services.analytics.Analytics.Management.CustomDimensions.Insert;
 import com.google.api.services.analytics.Analytics.Management.CustomDimensions.Update;
+import com.google.api.services.analytics.Analytics.Management.ProfileFilterLinks;
 import com.google.api.services.analytics.Analytics.Management.ProfileUserLinks;
+import com.google.api.services.analytics.Analytics.Management.Profiles.Patch;
 import com.google.api.services.analytics.Analytics.Management.WebpropertyUserLinks;
 import com.google.api.services.analytics.AnalyticsRequest;
 import com.google.api.services.analytics.model.CustomDimension;
 import com.google.api.services.analytics.model.EntityUserLink;
+import com.google.api.services.analytics.model.Filter;
+import com.google.api.services.analytics.model.Profile;
+import com.google.api.services.analytics.model.ProfileFilterLink;
 import com.google.api.services.analytics.model.UserRef;
 import com.google.api.services.analytics.model.EntityUserLink.Permissions;
 import com.google.api.services.analytics.model.EntityUserLinks;
@@ -60,6 +65,18 @@ public class GoogleAnalyticsManagementClient {
 	
 	public ProfileInfo getProfileInfo() {
 		return getProfileInfo(analyticsConnection.getProfileId());
+	}
+	
+	public void patchProfile ( String profileName ) throws IOException {
+		
+		ProfileInfo profile = getProfileInfo();
+		
+		Profile body = new Profile();
+		body.setName(profileName);
+		
+		Patch request = analyticsConnection.getAnalytics().management().profiles().patch(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId(), body);
+		protectedQuery ( request );
+		
 	}
 	
 	public void updateCustomDimension ( String customDimensionId, String dimensionName, String dimensionScope ) throws IOException {
@@ -149,7 +166,24 @@ public class GoogleAnalyticsManagementClient {
 		if ( dimensions == null ) return null;
 		
 		return dimensions.getItems();
-	}	
+	}
+	
+	public List<ProfileFilterLink> getFilters() throws IOException {
+		
+		ProfileInfo profile = getProfileInfo();
+		
+		ProfileFilterLinks.List request = analyticsConnection.getAnalytics().management().profileFilterLinks().list(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId());
+		com.google.api.services.analytics.model.ProfileFilterLinks links = protectedQuery(request);
+		if ( links == null ) return null;
+		
+		return links.getItems();
+		
+	}
+	
+	public Filter getFilter(String filterId ) throws IOException {
+		ProfileInfo profile = getProfileInfo();
+		return protectedQuery(analyticsConnection.getAnalytics().management().filters().get(profile.getAccountId(), filterId));
+	}
 	
 	public void updateAccountPermission ( String userId, String[] permissions ) throws IOException {
 		

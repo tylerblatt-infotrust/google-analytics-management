@@ -8,7 +8,7 @@
     
     <fullDescription>
         <intro>Retrieves filters and filter details for a Profile.</intro>
-       
+     </fullDescription>   
     <ports>
         <inPort index="0" name="Google Analytics Connection">Connection to Google Analytics API</inPort>
         <!-- possibly more input ports here-->

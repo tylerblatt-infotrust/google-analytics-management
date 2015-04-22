@@ -20,6 +20,7 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.port.PortObject;
+import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
 import com.google.api.services.analytics.model.GaData.ProfileInfo;
@@ -48,16 +49,12 @@ public class RemoveProfileNodeModel extends StandardTrackedNodeModel {
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
-            final ExecutionContext exec) throws Exception {
-
-        // TODO: Return a BufferedDataTable for each output port 
-        return new BufferedDataTable[]{};
+    protected PortObjectSpec[] configure(PortObjectSpec[] inSpecs)
+    		throws InvalidSettingsException {
+    	return new PortObjectSpec[] { createSpec() } ;
     }
+    
 
     /**
      * {@inheritDoc}

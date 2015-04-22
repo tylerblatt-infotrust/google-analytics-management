@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GoogleAnalyticUsers-Node extension for KNIME Workbench
 Bundle-SymbolicName: com.pg.google.api.management;singleton:=true
-Bundle-Version: 1.0.5
+Bundle-Version: 1.0.6
 Bundle-ClassPath: googleanalyticusers.jar
 Bundle-Activator: com.pg.google.api.management.listusers.node.GoogleAnalyticUsersNodePlugin
 Bundle-Vendor: P&G, eBusiness

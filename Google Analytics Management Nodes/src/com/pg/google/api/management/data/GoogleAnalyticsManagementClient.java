@@ -248,6 +248,15 @@ public class GoogleAnalyticsManagementClient {
 		);
 	}
 	
+	public void removeProfile ( ) throws Exception {
+		ProfileInfo profile = getProfileInfo();
+		
+		protectedQuery(
+			analyticsConnection.getAnalytics().management().profiles().delete(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId() )
+		);
+		
+	}
+	
 	public List<GoogleAnalyticsUser> getProfileUsers() throws IOException {
 		
 		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());

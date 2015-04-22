@@ -164,7 +164,6 @@ public class RemoveProfileNodeModel extends StandardTrackedNodeModel {
     	colSpecs.add(new DataColumnSpecCreator("Account Id", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Property Id", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Profile Id", StringCell.TYPE).createSpec());
-    	colSpecs.add(new DataColumnSpecCreator("User Id", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Status", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Error Message", StringCell.TYPE).createSpec());
     	

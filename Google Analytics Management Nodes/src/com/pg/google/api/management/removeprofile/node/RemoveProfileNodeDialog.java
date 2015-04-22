@@ -2,12 +2,12 @@ package com.pg.google.api.management.removeprofile.node;
 
 import javax.swing.JCheckBox;
 
-import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
+import org.knime.core.node.port.PortObjectSpec;
 
 import com.pg.knime.node.StandardTrackedNodeDialogPane;
 
@@ -54,10 +54,10 @@ public class RemoveProfileNodeDialog extends StandardTrackedNodeDialogPane {
 	
 	@Override
 	protected void loadSettingsFrom(NodeSettingsRO settings,
-			DataTableSpec[] specs) throws NotConfigurableException {
+			PortObjectSpec[] specs) throws NotConfigurableException {
 		
-		// Not reload?
-		
+		// None?
+	
 	}
 }
 

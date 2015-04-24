@@ -13,6 +13,7 @@ import com.google.api.services.analytics.Analytics.Management.AccountUserLinks;
 import com.google.api.services.analytics.Analytics.Management.CustomDimensions;
 import com.google.api.services.analytics.Analytics.Management.CustomDimensions.Insert;
 import com.google.api.services.analytics.Analytics.Management.CustomDimensions.Update;
+import com.google.api.services.analytics.Analytics.Management.Goals;
 import com.google.api.services.analytics.Analytics.Management.ProfileFilterLinks;
 import com.google.api.services.analytics.Analytics.Management.ProfileUserLinks;
 import com.google.api.services.analytics.Analytics.Management.Profiles.Patch;
@@ -21,6 +22,7 @@ import com.google.api.services.analytics.AnalyticsRequest;
 import com.google.api.services.analytics.model.CustomDimension;
 import com.google.api.services.analytics.model.EntityUserLink;
 import com.google.api.services.analytics.model.Filter;
+import com.google.api.services.analytics.model.Goal;
 import com.google.api.services.analytics.model.Profile;
 import com.google.api.services.analytics.model.ProfileFilterLink;
 import com.google.api.services.analytics.model.UserRef;
@@ -127,6 +129,8 @@ public class GoogleAnalyticsManagementClient {
 		);
 	}
 	
+	
+	
 	protected <T> T protectedQuery( AnalyticsRequest<T> request) throws IOException {
 		int attempt = 0;
 		T result = null;
@@ -177,6 +181,15 @@ public class GoogleAnalyticsManagementClient {
 		if ( links == null ) return null;
 		
 		return links.getItems();
+		
+	}
+	
+	public List<Goal> getGoals() throws IOException {
+		
+		ProfileInfo profile = getProfileInfo();
+		
+		Goals.List request = analyticsConnection.getAnalytics().management().goals().list(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId());
+		return protectedQuery(request).getItems();
 		
 	}
 	

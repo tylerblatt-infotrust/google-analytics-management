@@ -22,6 +22,7 @@ import com.google.api.services.analytics.AnalyticsRequest;
 import com.google.api.services.analytics.model.CustomDimension;
 import com.google.api.services.analytics.model.EntityUserLink;
 import com.google.api.services.analytics.model.Filter;
+import com.google.api.services.analytics.model.FilterRef;
 import com.google.api.services.analytics.model.Goal;
 import com.google.api.services.analytics.model.Profile;
 import com.google.api.services.analytics.model.ProfileFilterLink;
@@ -107,6 +108,24 @@ public class GoogleAnalyticsManagementClient {
 		
 		Insert request = analyticsConnection.getAnalytics().management().customDimensions().insert(profile.getAccountId(), profile.getWebPropertyId(), dimension);
 		protectedQuery(request);
+		
+	}
+	
+	public void insertProfileFilter(String filtername) throws IOException {
+		
+		// TODO: This is a very poor implementation - other filter fields need to be set
+		
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		ProfileFilterLink filter = new ProfileFilterLink();
+		FilterRef ref = new FilterRef();
+		
+		ref.setName(filtername);
+		filter.setFilterRef(ref);
+		
+		protectedQuery(
+				analyticsConnection.getAnalytics().management().profileFilterLinks().insert(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId(), filter)
+		);
 		
 	}
 	

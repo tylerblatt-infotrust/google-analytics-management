@@ -289,6 +289,13 @@ public class GoogleAnalyticsManagementClient {
 		
 	}
 	
+	public void removeProfileFilter ( String accountID, String linkID, String profileID, String webPropertyID ) throws Exception {
+			
+		protectedQuery(
+			analyticsConnection.getAnalytics().management().profileFilterLinks().delete(accountID, linkID, profileID, webPropertyID)
+		);
+	}
+	
 	public List<GoogleAnalyticsUser> getProfileUsers() throws IOException {
 		
 		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());

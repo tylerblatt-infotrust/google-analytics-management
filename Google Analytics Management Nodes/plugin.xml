@@ -21,6 +21,7 @@
 		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.removeprofile.node.RemoveProfileNodeFactory" id="com.pg.google.api.management.removeprofile.node.RemoveProfileNodeFactory"/>
 		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.listgoals.node.ListGoalsNodeFactory" id="com.pg.google.api.management.listgoals.node.ListGoalsNodeFactory"/>
 		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.insertprofilefilter.InsertProfileFilterNodeNodeFactory" id="com.pg.google.api.management.insertprofilefilter.InsertProfileFilterNodeNodeFactory"/>
+		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.removeprofilefilter.node.RemoveProfileFilterNodeFactory" id="com.pg.google.api.management.removeprofilefilter.node.RemoveProfileFilterNodeFactory"/>
 </extension>
    
 </plugin>

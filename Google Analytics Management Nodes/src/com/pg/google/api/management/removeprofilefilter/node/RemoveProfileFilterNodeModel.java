@@ -15,6 +15,7 @@ import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.port.PortObject;
+import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
@@ -64,11 +65,11 @@ public class RemoveProfileFilterNodeModel extends NodeModel {
     	
     	List<DataCell> cells = new ArrayList<DataCell>(spec.getNumColumns());
     	
+    	cells.add(new StringCell(config.getProfileID()));
     	cells.add(new StringCell(config.getAccountID()));
 		cells.add(new StringCell(config.getPropertyID()));
-		cells.add(new StringCell(config.getProfileID()));
 		cells.add(new StringCell(config.getFilterID()));
-				
+		
 		try {
     	
         	managementClient.removeProfileFilter(config.getAccountID(), config.getFilterID(), config.getProfileID(), config.getPropertyID());
@@ -96,22 +97,6 @@ public class RemoveProfileFilterNodeModel extends NodeModel {
         // TODO Code executed on reset.
         // Models build during execute are cleared here.
         // Also data handled in load/saveInternals will be erased here.
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
-            throws InvalidSettingsException {
-        
-        // TODO: check if user settings are available, fit to the incoming
-        // table structure, and the incoming types are feasible for the node
-        // to execute. If the node can execute in its current state return
-        // the spec of its output data table(s) (if you can, otherwise an array
-        // with null elements), or throw an exception with a useful user message
-
-        return new DataTableSpec[]{null};
     }
 
     /**
@@ -153,6 +138,14 @@ public class RemoveProfileFilterNodeModel extends NodeModel {
 
     }
     
+    @Override
+    protected PortObjectSpec[] configure(PortObjectSpec[] inSpecs)
+    		throws InvalidSettingsException {
+    	
+    	return new DataTableSpec[]{ createSpec() };
+    	
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -190,9 +183,9 @@ public class RemoveProfileFilterNodeModel extends NodeModel {
     private DataTableSpec createSpec() {
     	List<DataColumnSpec> colSpecs = new ArrayList<DataColumnSpec>();
     	
+    	colSpecs.add(new DataColumnSpecCreator("Profile Id", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Account Id", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Property Id", StringCell.TYPE).createSpec());
-    	colSpecs.add(new DataColumnSpecCreator("Profile Id", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Filter Id", StringCell.TYPE).createSpec());    	
     	colSpecs.add(new DataColumnSpecCreator("Status", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Error Message", StringCell.TYPE).createSpec());

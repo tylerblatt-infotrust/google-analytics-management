@@ -10,7 +10,7 @@ public class RemoveProfileFilterNodeConfiguration {
 	private String propertyID = "";
 	private String filterID = "";
 	
-	private final static String CFG_PROFILE_ID = "cfg.user.id";
+	private final static String CFG_PROFILE_ID = "cfg.profile.id";
 	private final static String CFG_ACCOUNT_ID = "cfg.account.id";
 	private final static String CFG_PROPERTY_ID = "cfg.property.id";
 	private final static String CFG_FILTER_ID = "cfg.filter.id";

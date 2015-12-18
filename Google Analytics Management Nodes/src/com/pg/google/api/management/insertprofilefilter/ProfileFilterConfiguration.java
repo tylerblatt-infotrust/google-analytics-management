@@ -7,7 +7,7 @@ public class ProfileFilterConfiguration {
 
 	private String filterName = "";
 	
-	private static String CFG_NAME = "cfg.filter.name";
+	private static String CFG_NAME = "cfg.filter.id";
 
 	public String getFilterName() {
 		return filterName;

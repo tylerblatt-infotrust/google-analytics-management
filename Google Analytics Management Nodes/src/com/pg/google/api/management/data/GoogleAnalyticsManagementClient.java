@@ -1,12 +1,16 @@
 package com.pg.google.api.management.data;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.knime.core.node.NodeLogger;
+import org.json.*;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.analytics.Analytics.Management.AccountUserLinks;
@@ -20,6 +24,7 @@ import com.google.api.services.analytics.Analytics.Management.Profiles.Patch;
 import com.google.api.services.analytics.Analytics.Management.WebpropertyUserLinks;
 import com.google.api.services.analytics.AnalyticsRequest;
 import com.google.api.services.analytics.model.CustomDimension;
+import com.google.api.services.analytics.model.CustomMetric;
 import com.google.api.services.analytics.model.EntityUserLink;
 import com.google.api.services.analytics.model.Filter;
 import com.google.api.services.analytics.model.FilterRef;
@@ -31,6 +36,10 @@ import com.google.api.services.analytics.model.EntityUserLink.Permissions;
 import com.google.api.services.analytics.model.EntityUserLinks;
 import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.GaData.ProfileInfo;
+import com.google.api.services.analytics.model.Webproperty;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.pg.google.api.analytics.connector.data.GoogleAnalyticsConnection;
 
 public class GoogleAnalyticsManagementClient {
@@ -40,7 +49,7 @@ public class GoogleAnalyticsManagementClient {
 	//private static final String ALL = "~all";
 	private static final NodeLogger LOGGER = NodeLogger.getLogger(GoogleAnalyticsManagementClient.class);
 	private static final int MAX_ATTEMPTS = 5;
-	
+		
 	protected static HashMap<String, ProfileInfo> PROFILE_CACHE = new HashMap<String, ProfileInfo>();
 	
 	public GoogleAnalyticsManagementClient( GoogleAnalyticsConnection connection ) {
@@ -111,22 +120,48 @@ public class GoogleAnalyticsManagementClient {
 		
 	}
 	
-	public void insertProfileFilter(String filtername) throws IOException {
+public void insertProfileFilter(String id) throws IOException {
 		
 		// TODO: This is a very poor implementation - other filter fields need to be set
 		
 		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
 		
-		ProfileFilterLink filter = new ProfileFilterLink();
-		FilterRef ref = new FilterRef();
+		// Construct the filter reference.
+		FilterRef filterRef = new FilterRef();
+		filterRef.setId(id);
 		
-		ref.setName(filtername);
-		filter.setFilterRef(ref);
+		// Construct the body of the request.
+		ProfileFilterLink body = new ProfileFilterLink();
+		body.setFilterRef(filterRef);
 		
 		protectedQuery(
-				analyticsConnection.getAnalytics().management().profileFilterLinks().insert(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId(), filter)
+				analyticsConnection.getAnalytics().management().profileFilterLinks().insert(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId(), body)
 		);
 		
+		
+	}
+	
+	public String insertFilter(Filter filter) throws IOException 
+	{
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		filter.setAccountId(profile.getAccountId());
+		
+		
+		Filter response = protectedQuery(		
+				analyticsConnection.getAnalytics().management().filters().insert(profile.getAccountId(), filter)	
+		);
+		System.out.print(response);
+		return response.getId();
+	}
+	
+	public String insertProfile(Profile body, String webProperty) throws IOException{
+		
+		String account = webProperty.split("-", 4)[1];
+				
+		Profile profile = protectedQuery(
+				analyticsConnection.getAnalytics().management().profiles().insert(account, webProperty, body)
+		);
+		return profile.getId(); 
 	}
 	
 	public void addUserToProfile ( String emailaddress ) throws IOException {
@@ -271,6 +306,14 @@ public class GoogleAnalyticsManagementClient {
 				analyticsConnection.getAnalytics().management().accountUserLinks().delete(profile.getAccountId(), profile.getAccountId() + ":" + userId)
 		);
 	}
+	
+	public void updateProfile(String profile_id, Profile body) throws IOException {
+		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
+		
+		protectedQuery(
+				analyticsConnection.getAnalytics().management().profiles().update(profile.getAccountId(), profile.getWebPropertyId(), profile_id, body)
+		);
+	}	
 
 	public void removePropertyUser ( String userId ) throws IOException {
 		ProfileInfo profile = getProfileInfo(analyticsConnection.getProfileId());
@@ -285,6 +328,34 @@ public class GoogleAnalyticsManagementClient {
 		
 		protectedQuery(
 			analyticsConnection.getAnalytics().management().profiles().delete(profile.getAccountId(), profile.getWebPropertyId(), profile.getProfileId() )
+		);
+		
+	}
+	
+	public void updateCustomeDimension(String cd_id, CustomDimension body) throws Exception {
+	
+		ProfileInfo profile = getProfileInfo();
+		
+		protectedQuery(
+			analyticsConnection.getAnalytics().management().customDimensions().update(profile.getAccountId(), profile.getWebPropertyId(), cd_id, body )
+		);
+	}
+	
+	public void updateWebProperty(String wpId, Webproperty body) throws Exception {
+		
+		ProfileInfo profile = getProfileInfo();
+		
+		protectedQuery(
+			analyticsConnection.getAnalytics().management().webproperties().update(profile.getAccountId(), wpId, body )
+		);
+		
+	}
+	
+	public void updateCustomeMetric(String cm_id, CustomMetric body) throws Exception {
+		ProfileInfo profile = getProfileInfo();
+		
+		protectedQuery(
+			analyticsConnection.getAnalytics().management().customMetrics().update(profile.getAccountId(), profile.getWebPropertyId(), cm_id, body )
 		);
 		
 	}
@@ -427,5 +498,6 @@ public class GoogleAnalyticsManagementClient {
 		
 		return users;
 	}
+	
 	
 }

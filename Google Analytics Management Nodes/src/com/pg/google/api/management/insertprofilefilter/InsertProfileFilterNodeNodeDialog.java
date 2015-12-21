@@ -36,7 +36,7 @@ public class InsertProfileFilterNodeNodeDialog extends StandardTrackedNodeDialog
     	addTab("Settings", 
     		buildStandardPanel(
     				new PanelBuilder()
-    					.add("Filter Name", txtFilterName )
+    					.add("Filter ID", txtFilterName )
     					.build()
     		)
     			

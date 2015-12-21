@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<knimeNode icon="./default.png" type="Source" xmlns="http://knime.org/node/v2.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://knime.org/node/v2.10 http://knime.org/node/v2.10.xsd">
+    <name>GA Management Insert Profile (P&amp;G)</name>
+    
+    <shortDescription>
+        Insert a profile into a Web Property
+    </shortDescription>
+    
+    <fullDescription>
+        <intro>Insert a profile into a Web Property</intro>
+        
+        
+      
+    </fullDescription>
+    
+    <ports>
+         <inPort index="0" name="Google API Connector">Connection to Google Analytics API</inPort>
+        <!-- possibly more input ports here-->
+        <outPort index="0" name="Insert Profile">Profile that has been added to the GA Account/Property</outPort>
+        <!-- possibly more output ports here-->
+    </ports>    
+    
+</knimeNode>

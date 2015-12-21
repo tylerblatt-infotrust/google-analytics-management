@@ -1,16 +1,12 @@
 package com.pg.google.api.management.data;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.knime.core.node.NodeLogger;
-import org.json.*;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.analytics.Analytics.Management.AccountUserLinks;
@@ -37,9 +33,6 @@ import com.google.api.services.analytics.model.EntityUserLinks;
 import com.google.api.services.analytics.model.GaData;
 import com.google.api.services.analytics.model.GaData.ProfileInfo;
 import com.google.api.services.analytics.model.Webproperty;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.pg.google.api.analytics.connector.data.GoogleAnalyticsConnection;
 
 public class GoogleAnalyticsManagementClient {

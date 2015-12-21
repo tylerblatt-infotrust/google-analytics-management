@@ -27,8 +27,6 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import com.google.api.services.analytics.model.Webproperty;
-import com.google.api.services.analytics.model.Webproperty.ChildLink;
-import com.google.api.services.analytics.model.Webproperty.ParentLink;
 import com.pg.google.api.analytics.connector.data.GoogleAnalyticsConnectionPortObject;
 import com.pg.google.api.management.data.GoogleAnalyticsManagementClient;
 

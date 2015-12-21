@@ -21,11 +21,8 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
-import com.google.api.services.analytics.model.GaData.ProfileInfo;
 import com.pg.google.api.analytics.connector.data.GoogleAnalyticsConnectionPortObject;
-import com.pg.google.api.connector.data.GoogleApiConnectionPortObject;
 import com.pg.google.api.management.data.GoogleAnalyticsManagementClient;
-import com.pg.google.api.management.insertprofile.node.InsertProfileConfiguration;
 /**
  * This is the model implementation of InsertProfileFilterNode.
  * 

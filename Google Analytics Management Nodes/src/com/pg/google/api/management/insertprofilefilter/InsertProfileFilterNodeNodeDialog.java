@@ -2,7 +2,6 @@ package com.pg.google.api.management.insertprofilefilter;
 
 import javax.swing.JTextField;
 
-import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;

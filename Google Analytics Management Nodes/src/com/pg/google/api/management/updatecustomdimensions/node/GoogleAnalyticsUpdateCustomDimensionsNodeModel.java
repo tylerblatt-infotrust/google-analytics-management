@@ -203,7 +203,6 @@ public class GoogleAnalyticsUpdateCustomDimensionsNodeModel extends NodeModel {
     	colSpecs.add(new DataColumnSpecCreator("Custom Dimension Id", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Custom Dimension Name", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Custom Dimension Scope", StringCell.TYPE).createSpec());
-    	colSpecs.add(new DataColumnSpecCreator("Active", StringCell.TYPE).createSpec());    	
     	colSpecs.add(new DataColumnSpecCreator("Status", StringCell.TYPE).createSpec());
     	colSpecs.add(new DataColumnSpecCreator("Error Message", StringCell.TYPE).createSpec());
     	

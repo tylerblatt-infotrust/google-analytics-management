@@ -22,6 +22,15 @@
 		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.listgoals.node.ListGoalsNodeFactory" id="com.pg.google.api.management.listgoals.node.ListGoalsNodeFactory"/>
 		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.insertprofilefilter.InsertProfileFilterNodeNodeFactory" id="com.pg.google.api.management.insertprofilefilter.InsertProfileFilterNodeNodeFactory"/>
 		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.removeprofilefilter.node.RemoveProfileFilterNodeFactory" id="com.pg.google.api.management.removeprofilefilter.node.RemoveProfileFilterNodeFactory"/>
+
+		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.insertprofile.node.InsertProfileNodeFactory" id="com.pg.google.api.management.insertprofile.node.InsertProfileNodeFactory"/>
+		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.updatecustomdimensions.node.GoogleAnalyticsUpdateCustomDimensionsNodeFactory" id="com.pg.google.api.management.updatecustomdimensions.node.GoogleAnalyticsUpdateCustomDimensionsNodeFactory"/>
+		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.updatecustommetric.node.GoogleAnalyticsUpdateCustomMetricNodeFactory" id="com.pg.google.api.management.updatecustomdimensions.node.GoogleAnalyticsUpdateCustomMetricNodeFactory"/>
+		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.updateprofile.node.GoogleAnalyticsUpdateProfileNodeFactory" id="com.pg.google.api.management.updatecustomdimensions.node.GoogleAnalyticsUpdateProfileNodeFactory"/>
+		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.updatewebproperty.node.GoogleAnalyticsUpdateWebPropertyNodeFactory" id="com.pg.google.api.management.updatecustomdimensions.node.GoogleAnalyticsUpdateWebPropertyNodeFactory"/>
+		<node category-path="/pg/google/ganalytics/gam" factory-class="com.pg.google.api.management.insertfilter.node.GoogleAnalyticsInsertFilterNodeFactory" id="com.pg.google.api.management.insertcustomdimensions.node.GoogleAnalyticsInsertFilterNodeFactory"/>
+
+
 </extension>
    
 </plugin>
